@@ -2,7 +2,7 @@
 
 namespace TodoApp;
 
-use App\Repositories\UserRepositories;
+use App\Repositories\UserRepository;
 
 class Auth
 {
@@ -12,7 +12,7 @@ class Auth
     
     private function __construct() 
     {
-        $this->userRepository = new UserRepositories();
+        $this->userRepository = new UserRepository();
     }
     
     private function __clone() {}

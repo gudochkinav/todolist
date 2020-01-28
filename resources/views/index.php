@@ -11,8 +11,14 @@
         <?php if ($_SESSION['email']) { ?>
             <br>
             <a href="/auth/logout">logout</a>
+            <br>
         <?php } ?>
-        
+            
+        <?php if(isset($tasklist_hash)) {?>
+            <br>
+            <a href="/">Home</a>
+        <?php } ?>
+
         <section class="todoapp">
             <header class="header">
                 <h1>todos</h1>
@@ -50,6 +56,75 @@
                 <button id="clear-completed" onclick="clearCompeted()" class="clear-completed">Clear completed</button>
             </footer>
         </section>
+            
+        <?php if (count($shared_tasks_for_user)) { ?>
+            <h1>Shared task for user</h1>
+
+            <style type="text/css">
+                .tg  {border-collapse:collapse;border-spacing:0;}
+                .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+                .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+                .tg .tg-9wq8{border-color:inherit;text-align:center;vertical-align:middle}
+                .tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+            </style>
+
+            <table  id="shared-users" class="tg">
+                <tr>
+                    <th class="tg-9wq8">email</th>
+                </tr>
+
+                <?php foreach ($shared_tasks_for_user as $shared_task_for_user) { ?>
+                    <tr>
+                        <td class="tg-c3ow">
+                            <a href="/shared?tasklist_hash=<?php echo $shared_task_for_user->getHash(); ?>"><?php echo $shared_task_for_user->getOwnerUser()->getEmail(); ?></a>
+                        </td>
+                    </tr>
+                <?php } ?>
+
+            </table>
+        <?php } ?>
+
+        <?php if( ! isset($tasklist_hash)) {?>
+        <h1>Add user</h1>
+        <form method="post" action='/add-shared-user'>
+            <input type="text" name="email">
+            <input name="rules" class="toggle" type="checkbox" class="checked" value="w">
+            <label>(R/W)</label>
+
+            <input type="submit" value="Add">
+        </form>
+
+            <?php if (count($shared_users)) { ?>
+            <h1>Shared users</h1>
+
+            <table  id="shared-users" class="tg">
+                <tr>
+                    <th class="tg-9wq8">email</th>
+                    <th class="tg-c3ow">mode</th>
+                    <th class="tg-c3ow"></th>
+                </tr>
+
+                <?php foreach ($shared_users as $shared_user) { ?>
+                <tr id="shared-user-<?php echo $shared_user->getId(); ?>">
+                    <td class="tg-c3ow">
+                        <?php echo $shared_user->getSharedUser()->getEmail(); ?>
+                    </td>
+                    <td class="tg-c3ow">
+                        <input id="toggle-mode-<?php echo $shared_user->getId(); ?>"
+                               type="checkbox" 
+                               onclick="toggleMode(this, <?php echo $shared_user->getId(); ?>)"
+                               <?php echo ($shared_user->getMode() == 'w') ? "checked" : "" ?>
+                               value="<?php echo $shared_user->getMode(); ?>">
+                    </td>
+                    <td class="tg-c3ow">
+                        <button onclick="deleteSharedUser(<?php echo $shared_user->getId(); ?>)">Delete</button>
+                    </td>
+                </tr>
+                <?php } ?>
+
+            </table>
+            <?php } ?>
+        <?php } ?>
 
         <footer class="info">
             <p>Double-click to edit a todo</p>
@@ -65,13 +140,55 @@
     </body>
 </html>
 
-<script>
+<script>   
     updateCounter();
 
     toggleClearCompetedButton();
 
     toggleToggleAllButton();
     
+    function deleteSharedUser(shared_task_id) {
+        var url = '/delete-shared-user';
+        var data = {'shared_task_id' : shared_task_id};
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            data: data,
+            dataType: 'html',
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.result == 'success')
+                {
+                    $('#shared-user-' + data.id).remove();
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+
+    function toggleMode(element, shared_task_id) {
+        var url = '/toggle-mode';
+        var data = {'shared_task_id' : shared_task_id};
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            data: data,
+            dataType: 'html',
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.result == 'success')
+                {
+                    
+                }
+            },
+            error: function (result) {
+            }
+        });
+    }
+
     function toggleToggleAllButton() {
         if ($("ul#todo-list > li.completed").length == $("ul#todo-list > li").length) {
             document.getElementById('toggle-all').checked = true;
@@ -224,6 +341,12 @@
         if (event.keyCode == 13) {
             var url = '/add-task';
             var data = {'name': event.target.value};
+            
+            <?php if (isset($tasklist_hash)) { ?>
+                data.hash = "<?php echo $tasklist_hash ?>";
+            <?php } ?>
+                
+                console.log(data);
 
             $.ajax({
                 url: url,
@@ -248,6 +371,10 @@
 
         var url = '/delete-task';
         var data = {'id': task_id};
+        
+        <?php if (isset($tasklist_hash)) { ?>
+            data.hash = "<?php echo $tasklist_hash ?>";
+        <?php } ?>
 
         $.ajax({
             url: url,
@@ -279,6 +406,9 @@
         }
 
         var data = {};
+        <?php if(isset($tasklist_hash)) {?>
+            data = {'hash' : "<?php echo $tasklist_hash ?>"};
+        <?php } ?>
 
         $.ajax({
             url: url,

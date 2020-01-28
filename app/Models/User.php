@@ -4,19 +4,27 @@ namespace App\Models;
 
 class User 
 {
+    private $id;
+    
     private $name;
 
     private $email;
     
     private $password;
     
-    function __construct(string $name, string $email, string $password)
+    function __construct(array $params)
     {
-        $this->name = $name;
-        $this->email = $email;
-        $this->password = $password;
+        $this->id = $params['id'];
+        $this->name = $params['name'];
+        $this->email = $params['email'];
+        $this->password = $params['password'];
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
     public function getName(): string 
     {
         return $this->name;
@@ -35,6 +43,7 @@ class User
     public function toArray()
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'password' => $password,

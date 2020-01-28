@@ -5,7 +5,7 @@ namespace App\Repositories;
 use TodoApp\DataBase;
 use App\Models\User;
 
-class UserRepositories 
+class UserRepository
 {
     protected const TABLE_NAME = 'users';
 
@@ -41,14 +41,41 @@ class UserRepositories
         return true;
     }
     
-    public function getUserByEmail(string $email)
+    public function getUserById(int $id) : User
+    {
+        $stmp = $this->database->getConnect()->prepare('SELECT * from ' . $this->getTableName() . ' where id=:id');
+
+        $stmp->bindParam(':id', $id);
+        $stmp->execute();
+        $result = $stmp->fetch();
+
+        $params['id'] = $result['id'];
+        $params['name'] = $result['name'];
+        $params['email'] = $result['email'];
+        $params['password'] = $result['password'];
+
+        return new User($params);
+    }
+
+    public function getUserByEmail(string $email) : ?User
     {
         $stmp = $this->database->getConnect()->prepare('SELECT * from ' . $this->getTableName() . ' where email=:email');
 
         $stmp->bindParam(':email', $email);
         $stmp->execute();
+
+        $result = $stmp->fetch();
+        if ( ! $result)
+        {
+            return null;
+        }
+
+        $params['id'] = $result['id'];
+        $params['name'] = $result['name'];
+        $params['email'] = $result['email'];
+        $params['password'] = $result['password'];
         
-        return $stmp->fetch();
+        return new User($params);
     }
     
     public function createUser(string $name, string $email, string $password) 

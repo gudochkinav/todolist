@@ -30,7 +30,7 @@ class DataBase
 
     protected function loadConfigFiles() 
     {
-        $this->config = include(__DIR__ . "/../../config/database.php");
+        $this->config = include(BASE_DIR . "config/database.php");
     }
 
     protected function connect() 

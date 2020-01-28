@@ -6,7 +6,7 @@ class View
 {
     private const DEFAULT_NAME = 'index';
 
-    private const DEFAULT_PATH = ROOT_DIRECTORY.'resources/views/';
+    private const DEFAULT_PATH = BASE_DIR . 'resources/views/';
     
     private const DEFAULT_EXTENSION = '.php';
     

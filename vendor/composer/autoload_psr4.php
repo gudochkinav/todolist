@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'TodoApp\\' => array($baseDir . '/src/lib'),
+    'TodoApp\\' => array($vendorDir . '/todolist/src'),
     'App\\' => array($baseDir . '/app'),
 );

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Repositories\UserRepositories;
+use App\Repositories\UserRepository;
 
 use TodoApp\SessionErrorContainer;
 use TodoApp\View;
@@ -25,11 +25,11 @@ class AuthController
     public function __construct()
     {
         $this->router = new Router($_SERVER['REQUEST_URI']);
-        $this->userRepositories = new UserRepositories();
+        $this->userRepositories = new UserRepository();
         $this->errorsContainer = SessionErrorContainer::getInstance();
         $this->auth = Auth::getInstance();
     }
-    
+
     public function loginPage() 
     {
         if ($this->auth->check()) 
@@ -68,7 +68,7 @@ class AuthController
         $guard = new Guard();
         $hashedPassword = $guard->crypt($password);
 
-        if ($user['password'] != $hashedPassword)
+        if ($user->getPassword() != $hashedPassword)
         {
             $this->errorsContainer->push('user_not_exists', 'Wrong username or password combination');
             $this->router->redirect('/auth/login');

@@ -16,7 +16,7 @@ class Router
 
     protected function loadConfigFiles() 
     {
-        $this->routes = include(__DIR__ . "/../../config/routes.php");
+        $this->routes = include(BASE_DIR . "config/routes.php");
     }
 
     public function redirect(string $uri)

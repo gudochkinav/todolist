@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-class Task 
+class Task
 {
-    const OPENED_TASK = '1';
-    
-    const CLOSED_TASK = '0';
-    
+    public const OPENED_TASK = '1';
+
+    public const CLOSED_TASK = '0';
+
     private $id;
-    
+
     private $name;
-    
+
     private $userId;
     
     private $status;
@@ -20,13 +20,14 @@ class Task
     
     private $updatedAt;
 
-    function __construct(int $id, string $name, int $userId, int $status, int $createdAt, int $updatedAt)
+    function __construct(array $params)
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->status = $status;
-        $this->createdAt = $createdAt;
-        $this->updatedAt = $updatedAt;
+        $this->id = $params['id'];
+        $this->name = $params['name'];
+        $this->userId = $params['user_id'];
+        $this->status = $params['status'];
+        $this->createdAt = $params['created_at'];;
+        $this->updatedAt = $params['updated_at'];;
     }
     
     public function getId() : int
@@ -54,7 +55,17 @@ class Task
         return $this->status;
     }
     
-    public function setStatus(int $status) : void
+    public function close() : void
+    {
+        $this->status = self::CLOSED_TASK;
+    }
+    
+    public function open() : void
+    {
+        $this->status = self::OPENED_TASK;
+    }
+
+public function setStatus(int $status) : void
     {
         $this->status = $status;
     }
