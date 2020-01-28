@@ -152,7 +152,7 @@ class AppController
 
     public function addTask(string $name, string $tasklistHash = null) 
     {
-        $hasEditedPermission = false;
+        $hasEditedPermission = true;
 
         $user = $this->app->user();
         $userId = $user->getId();
@@ -160,15 +160,14 @@ class AppController
         if ($tasklistHash)
         {
             $sharedTask = $this->sharedTaskRepository->getSharedTasks(['hash' => $tasklistHash])[0];
-            if ($sharedTask->getMode() == SharedTask::WRITE_MODE)
+            if ($sharedTask->getMode() == SharedTask::READ_MODE)
+            {
+                $hasEditedPermission = false;
+            }
+            else
             {
                 $userId = $sharedTask->getOwnerUser()->getId();
-                $hasEditedPermission = true;
             }
-        } 
-        else if ($task->getUserId() == $this->app->user()->getId())
-        {
-            $hasEditedPermission = true;
         }
         
         if ( ! $hasEditedPermission)
