@@ -28,7 +28,7 @@
 | updated_at | int(11)       | YES  |     | 0       |                |
 
 
-2. users - таблицп пользователей
+2. users - таблица пользователей
 
 | Field          | Type         | Null | Key | Default | Extra          |
 |----------------|--------------|------|-----|---------|----------------|
@@ -39,5 +39,18 @@
 | remember_token | varchar(255) | YES  |     | NULL    |                |
 | created_at     | int(11)      | YES  |     | 0       |                |
 | updated_at     | int(11)      | YES  |     | 0       |                |
+
+3. shared_tasks - таблица с шаринга списка задач другому пользователю
+
+| Field          | Type          | Null | Key | Default | Extra          |
+|----------------|---------------|------|-----|---------|----------------|
+| id             | int(11)       | NO   | PRI | NULL    | auto_increment |
+| owner_id       | int(11)       | NO   |     | NULL    |                |
+| shared_user_id | int(11)       | NO   |     | NULL    |                |
+| mode           | enum('r','w') | YES  |     | r       |                |
+| hash           | varchar(255)  | YES  |     | NULL    |                |
+| created_at     | int(11)       | YES  |     | 0       |                |
+| updated_at     | int(11)       | YES  |     | 0       |                |
+
 
 
